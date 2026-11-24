@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Organ Donation & Allocation System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🫀</text></svg>">
+</head>
+<body>
+
+  <!-- =========================================================================
+       Left Sidebar Navigation
+       ========================================================================= -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-icon">🫀</div>
+      <div class="logo-text">
+        <h1>OrganMatch AI</h1>
+        <span>Clinical Allocation</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Role-Specific Dashboards (Top Priority) -->
+      <div class="nav-section-title" id="nav-role-section-title">PORTAL ACCESS</div>
+      <a class="nav-item" data-view="admin" id="nav-item-admin" style="display:none;">
+        <span class="icon">🛡️</span>
+        <span>Admin Dashboard</span>
+      </a>
+      <a class="nav-item" data-view="donor-dashboard" id="nav-item-donor" style="display:none;">
+        <span class="icon">🩸</span>
+        <span>Donor Dashboard</span>
+      </a>
+      <a class="nav-item" data-view="recipient-dashboard" id="nav-item-recipient" style="display:none;">
+        <span class="icon">🏥</span>
+        <span>Recipient Dashboard</span>
+      </a>
+
+      <!-- Core System Views -->
+      <div class="nav-section-title">Core System</div>
+      <a class="nav-item active" data-view="dashboard">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" data-view="donors">
+        <span class="icon">👥</span>
+        <span>Donor Registry</span>
+      </a>
+      <a class="nav-item" data-view="recipients">
+        <span class="icon">📋</span>
+        <span>Recipient Waitlist</span>
+      </a>
+
+      <!-- Algorithms & Graph Section -->
+      <div class="nav-section-title">Algorithms & Graph</div>
+      <a class="nav-item" data-view="graph">
+        <span class="icon">🕸️</span>
+        <span>Bipartite Visualizer</span>
+      </a>
+      <a class="nav-item" data-view="matching">
+        <span class="icon">⚡</span>
+        <span>Matching Engine</span>
+      </a>
+      <a class="nav-item" data-view="comparison">
+        <span class="icon">📈</span>
+        <span>Algorithm Comparison</span>
+      </a>
+      <a class="nav-item" data-view="benchmark">
+        <span class="icon">🧪</span>
+        <span>Scalability Benchmark</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="backend-indicator">
+        <div class="status-dot pulse"></div>
+        <span>C Engine & SQLite (Active)</span>
+      </div>
+      <div style="font-size: 11px; color: #64748b; text-align: center;">
+        Capstone v2.5 • Role-Based Auth
+      </div>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       Main Content Container
+       ========================================================================= -->
+  <div id="main-content">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-title">
+        <h2 id="page-title">Dashboard Overview</h2>
+        <p id="page-subtitle">Real-time organ donor-recipient matching and allocation analytics</p>
+      </div>
+
+      <div class="header-actions">
+        <div class="disclaimer-banner">
+          ⚠️ Academic Simulation • Clinical verification required
+        </div>
+
+        <!-- Auth Actions / User Profile Pill -->
+        <div class="auth-bar" id="header-auth-bar">
+          <!-- Populated dynamically: Login/Register buttons OR User Profile pill -->
+        </div>
+
+        <button id="btn-reset-data" class="btn btn-secondary btn-sm" title="Restore sample dataset">
+          ↺ Reset
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Views Area -->
+    <main class="content-body">
+
+      <!-- =====================================================================
+           VIEW 1: Dashboard Overview (Public / Overview)
+           ===================================================================== -->
+      <section id="view-dashboard" class="view-page active">
+        <!-- Stats KPI Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">👥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-donors">--</div>
+              <div class="stat-label">Registered Donors</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🏥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-recipients">--</div>
+              <div class="stat-label">Waiting Recipients</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon red">⚡</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-critical">--</div>
+              <div class="stat-label">Critical Matched</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber">🎯</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-score">--%</div>
+              <div class="stat-label">Avg Compatibility</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue">🔗</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-edges">--</div>
+              <div class="stat-label">Compatibility Edges</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">✓</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-matched">--</div>
+              <div class="stat-label">Allocated Pairs</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Two-Column Overview -->
+        <div class="comparison-grid" style="grid-template-columns: 1.2fr 0.8fr; margin-bottom: 24px;">
+          <!-- Left: Recent Matches Preview -->
+          <div class="card" style="margin-bottom: 0;">
+            <div class="card-header">
+              <div class="card-title">
+                <span>⚡</span>
+                <span>Active Matched Allocations (Graph Output)</span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-view-all-matches">View Full Table →</button>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Donor</th>
+                      <th>Recipient</th>
+                      <th>Organ</th>
+                      <th>Urgency</th>
+                      <th>Score</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-matches-tbody">
+                    <tr><td colspan="5" style="text-align:center; padding: 20px; color: #94a3b8;">Loading allocation results...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Role Portal & Quick Login -->
+          <div class="card" style="margin-bottom: 0;">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🔐</span>
+                <span>Role-Based Access Portals</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:#6d28d9;">🛡️ Admin Portal</strong>
+                    <button class="btn btn-sm btn-outline" onclick="triggerQuickLogin('admin')">Demo Admin Login</button>
+                  </div>
+                  <div style="font-size: 11px; color:#64748b; margin-top:4px;">
+                    Authorized admin: <code>saisriramchakka@gmail.com</code> (Transplant approval, donor availability, donation completion).
+                  </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:#0284c7;">🩸 Donor Portal</strong>
+                    <button class="btn btn-sm btn-outline" onclick="triggerQuickLogin('donor')">Demo Donor Login</button>
+                  </div>
+                  <div style="font-size: 11px; color:#64748b; margin-top:4px;">
+                    Register or log in to manage your medical donor profile and update your live organ donation availability.
+                  </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:#047857;">🏥 Recipient Portal</strong>
+                    <button class="btn btn-sm btn-outline" onclick="triggerQuickLogin('recipient')">Demo Recipient Login</button>
+                  </div>
+                  <div style="font-size: 11px; color:#64748b; margin-top:4px;">
+                    Track organ request status, urgency tier, and real-time algorithmic matching updates.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Organ Distribution Bar Cards -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🩺</span>
+              <span>Organ Registry Distribution</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="organ-distribution-bars" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW: ADMIN DASHBOARD (Authorized Admin Only)
+           ===================================================================== -->
+      <section id="view-admin" class="view-page">
+        <!-- Admin 7 KPI Cards -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-icon blue">👥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-total-donors">--</div>
+              <div class="stat-label">Total Donors</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🏥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-total-recipients">--</div>
+              <div class="stat-label">Total Recipients</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">✓</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-available-donors">--</div>
+              <div class="stat-label">Available Donors</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon red">🛑</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-unavailable-donors">--</div>
+              <div class="stat-label">Unavailable Donors</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue">📋</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-total-requests">--</div>
+              <div class="stat-label">Organ Requests</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🏆</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-successful-donations">--</div>
+              <div class="stat-label">Successful Donations</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon amber">⏳</div>
+            <div class="stat-info">
+              <div class="stat-value" id="admin-stat-pending-matches">--</div>
+              <div class="stat-label">Pending Matches</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Tabs Navigation -->
+        <div class="sub-tabs">
+          <div class="sub-tab active" data-admin-tab="matches">⚡ Proposed Matches & Approvals</div>
+          <div class="sub-tab" data-admin-tab="donors">🩸 All Donors & Availability</div>
+          <div class="sub-tab" data-admin-tab="recipients">🏥 Recipient Requests</div>
+          <div class="sub-tab" data-admin-tab="history">📜 Completed Donations History</div>
+        </div>
+
+        <!-- Sub-Tab 1: Proposed Matches & Workflow -->
+        <div id="admin-tab-matches" class="admin-tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>⚡</span>
+                <span>Algorithmic Matches Review & Clinical Approval Workflow</span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-primary btn-sm" id="btn-admin-sync-matches">🔄 Re-Run Graph Matching</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <p style="font-size:12px; color:#64748b; margin-bottom:14px;">
+                Matches proposed by Maximum Weight Bipartite Matching. The administrator reviews clinical compatibility, initiates transplant progression, and marks completed donations.
+              </p>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Match ID</th>
+                      <th>Donor Details</th>
+                      <th>Recipient Patient</th>
+                      <th>Organ</th>
+                      <th>Score</th>
+                      <th>Status</th>
+                      <th>Clinical Rationale</th>
+                      <th style="text-align:right;">Workflow Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-matches-tbody">
+                    <tr><td colspan="8" style="text-align:center; padding:20px;">Loading matches...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab 2: All Donors Management -->
+        <div id="admin-tab-donors" class="admin-tab-content" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🩸</span>
+                <span>Registered Donors & Live Availability Control</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <div class="search-input-wrapper">
+                  <span class="search-icon">🔍</span>
+                  <input type="text" id="admin-donor-search" placeholder="Search by name, ID, city, organ...">
+                </div>
+                <div class="filter-group">
+                  <select class="select-control" id="admin-donor-filter-status">
+                    <option value="">All Statuses</option>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="MATCHED">Matched</option>
+                    <option value="DONATION IN PROGRESS">Donation in Progress</option>
+                    <option value="DONATION COMPLETED">Donation Completed</option>
+                    <option value="UNAVAILABLE">Unavailable</option>
+                  </select>
+                  <select class="select-control" id="admin-donor-filter-organ">
+                    <option value="">All Organs</option>
+                    <option value="Kidney">Kidney</option>
+                    <option value="Liver">Liver</option>
+                    <option value="Heart">Heart</option>
+                    <option value="Lung">Lung</option>
+                    <option value="Pancreas">Pancreas</option>
+                    <option value="Cornea">Cornea</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Donor ID</th>
+                      <th>Full Name</th>
+                      <th>Contact / City</th>
+                      <th>Blood</th>
+                      <th>Organ</th>
+                      <th>Health Condition</th>
+                      <th>Current Status</th>
+                      <th style="text-align:right;">Change Availability</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-donors-tbody">
+                    <tr><td colspan="8" style="text-align:center; padding:20px;">Loading donors...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab 3: Recipient Requests -->
+        <div id="admin-tab-recipients" class="admin-tab-content" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🏥</span>
+                <span>Recipient Requests & Clinical Waitlist</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <div class="search-input-wrapper">
+                  <span class="search-icon">🔍</span>
+                  <input type="text" id="admin-recipient-search" placeholder="Search patient by name, ID, city...">
+                </div>
+                <div class="filter-group">
+                  <select class="select-control" id="admin-recipient-filter-urgency">
+                    <option value="">All Urgency Tiers</option>
+                    <option value="1">Critical (Tier 1)</option>
+                    <option value="2">Urgent (Tier 2)</option>
+                    <option value="3">Standard (Tier 3)</option>
+                  </select>
+                  <select class="select-control" id="admin-recipient-filter-organ">
+                    <option value="">All Organs</option>
+                    <option value="Kidney">Kidney</option>
+                    <option value="Liver">Liver</option>
+                    <option value="Heart">Heart</option>
+                    <option value="Lung">Lung</option>
+                    <option value="Pancreas">Pancreas</option>
+                    <option value="Cornea">Cornea</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Patient ID</th>
+                      <th>Patient Name</th>
+                      <th>Contact / City</th>
+                      <th>Blood</th>
+                      <th>Organ</th>
+                      <th>Urgency Tier</th>
+                      <th>Hospital & Doctor</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-recipients-tbody">
+                    <tr><td colspan="8" style="text-align:center; padding:20px;">Loading recipients...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab 4: Completed Donations History -->
+        <div id="admin-tab-history" class="admin-tab-content" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🏆</span>
+                <span>Completed Organ Donations (Audit History)</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Record #</th>
+                      <th>Donor Name (ID)</th>
+                      <th>Recipient Name (ID)</th>
+                      <th>Organ</th>
+                      <th>Compatibility</th>
+                      <th>Completion Date</th>
+                      <th>Hospital Center</th>
+                      <th>Transplant Surgeon</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-history-tbody">
+                    <tr><td colspan="9" style="text-align:center; padding:20px;">Loading donation history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW: DONOR PERSONAL DASHBOARD
+           ===================================================================== -->
+      <section id="view-donor-dashboard" class="view-page">
+        <!-- Donor Welcome Banner & Status -->
+        <div class="card" style="margin-bottom:20px; border-left: 5px solid #0284c7;">
+          <div class="card-body" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <h3 style="font-size:20px; font-weight:800; color:#0f172a;" id="donor-dash-welcome">Welcome, Donor</h3>
+              <p style="font-size:13px; color:#64748b; margin-top:2px;" id="donor-dash-id">Donor Profile #--</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:13px; font-weight:600; color:#475569;">Donation Status:</span>
+              <span class="badge" id="donor-dash-status-badge" style="font-size:13px; padding:6px 12px;">AVAILABLE</span>
+              <button class="btn btn-outline btn-sm" id="btn-donor-toggle-avail">Toggle Status</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-grid" style="grid-template-columns: 1fr 1fr;">
+          <!-- Left: Personal Medical Profile -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>👤</span>
+                <span>My Registered Donor Profile</span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-edit-donor-profile">Edit Profile</button>
+            </div>
+            <div class="card-body">
+              <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+                <div class="metric-row"><span class="label">Full Name:</span><span class="value" id="donor-p-name">--</span></div>
+                <div class="metric-row"><span class="label">Email Address:</span><span class="value" id="donor-p-email">--</span></div>
+                <div class="metric-row"><span class="label">Phone:</span><span class="value" id="donor-p-phone">--</span></div>
+                <div class="metric-row"><span class="label">Age / Gender:</span><span class="value" id="donor-p-age-gender">--</span></div>
+                <div class="metric-row"><span class="label">Blood Group:</span><span class="value"><span class="badge badge-blood" id="donor-p-bg">--</span></span></div>
+                <div class="metric-row"><span class="label">Organ Pledged:</span><span class="value"><span class="badge badge-organ" id="donor-p-organ">--</span></span></div>
+                <div class="metric-row"><span class="label">Location:</span><span class="value" id="donor-p-location">--</span></div>
+                <div class="metric-row"><span class="label">Health Condition:</span><span class="value" id="donor-p-health">--</span></div>
+                <div class="metric-row"><span class="label">Emergency Contact:</span><span class="value" id="donor-p-emergency">--</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Donation Matching & Progress -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🩺</span>
+                <span>My Allocation & Transplant Progress</span>
+              </div>
+            </div>
+            <div class="card-body" id="donor-matches-container">
+              <div style="text-align:center; padding:30px; color:#64748b;">
+                <div style="font-size:32px; margin-bottom:8px;">⏳</div>
+                <div style="font-weight:700; font-size:14px; color:#1e293b;">Active in Donor Registry</div>
+                <p style="font-size:12px; margin-top:6px;">Your profile is actively included in graph matching runs. You will be notified here when an authorized transplant center matches your organ.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW: RECIPIENT PERSONAL DASHBOARD
+           ===================================================================== -->
+      <section id="view-recipient-dashboard" class="view-page">
+        <!-- Recipient Welcome Banner & Urgency -->
+        <div class="card" style="margin-bottom:20px; border-left: 5px solid #10b981;">
+          <div class="card-body" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+              <h3 style="font-size:20px; font-weight:800; color:#0f172a;" id="rec-dash-welcome">Welcome, Patient</h3>
+              <p style="font-size:13px; color:#64748b; margin-top:2px;" id="rec-dash-id">Waitlist Patient #--</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:13px; font-weight:600; color:#475569;">Urgency Status:</span>
+              <span class="badge" id="rec-dash-urgency-badge" style="font-size:13px; padding:6px 12px;">CRITICAL</span>
+              <span class="badge badge-standard" id="rec-dash-wait-badge" style="font-size:13px; padding:6px 12px;">-- Days on Waitlist</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-grid" style="grid-template-columns: 1fr 1fr;">
+          <!-- Left: Clinical Profile -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>👤</span>
+                <span>My Clinical Request Profile</span>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-edit-rec-profile">Edit Details</button>
+            </div>
+            <div class="card-body">
+              <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+                <div class="metric-row"><span class="label">Patient Name:</span><span class="value" id="rec-p-name">--</span></div>
+                <div class="metric-row"><span class="label">Email Address:</span><span class="value" id="rec-p-email">--</span></div>
+                <div class="metric-row"><span class="label">Phone:</span><span class="value" id="rec-p-phone">--</span></div>
+                <div class="metric-row"><span class="label">Age / Gender:</span><span class="value" id="rec-p-age-gender">--</span></div>
+                <div class="metric-row"><span class="label">Blood Group:</span><span class="value"><span class="badge badge-blood" id="rec-p-bg">--</span></span></div>
+                <div class="metric-row"><span class="label">Required Organ:</span><span class="value"><span class="badge badge-organ" id="rec-p-organ">--</span></span></div>
+                <div class="metric-row"><span class="label">Location:</span><span class="value" id="rec-p-location">--</span></div>
+                <div class="metric-row"><span class="label">Hospital Name:</span><span class="value" id="rec-p-hospital">--</span></div>
+                <div class="metric-row"><span class="label">Attending Doctor:</span><span class="value" id="rec-p-doctor">--</span></div>
+                <div class="metric-row"><span class="label">Medical Condition:</span><span class="value" id="rec-p-condition">--</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Real-time Matching Status -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>⚡</span>
+                <span>Live Matching Status & Allocation</span>
+              </div>
+            </div>
+            <div class="card-body" id="rec-match-status-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 2: Donor Registry (Public Overview)
+           ===================================================================== -->
+      <section id="view-donors" class="view-page">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🩸</span>
+              <span>Registered Organ Donors</span>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openRegisterModal('donor')">+ Register New Donor</button>
+          </div>
+          <div class="card-body">
+            <div class="filter-bar">
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="donor-search" placeholder="Search by donor name, ID, city, organ...">
+              </div>
+              <div class="filter-group">
+                <select class="select-control" id="donor-filter-organ">
+                  <option value="">All Organs</option>
+                  <option value="Kidney">Kidney</option>
+                  <option value="Liver">Liver</option>
+                  <option value="Heart">Heart</option>
+                  <option value="Lung">Lung</option>
+                  <option value="Pancreas">Pancreas</option>
+                  <option value="Cornea">Cornea</option>
+                </select>
+
+                <select class="select-control" id="donor-filter-bg">
+                  <option value="">All Blood Groups</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+
+                <select class="select-control" id="donor-filter-status">
+                  <option value="">All Statuses</option>
+                  <option value="AVAILABLE">Available</option>
+                  <option value="DONATION IN PROGRESS">Donation in Progress</option>
+                  <option value="DONATION COMPLETED">Donation Completed</option>
+                  <option value="UNAVAILABLE">Unavailable</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Donor Name</th>
+                    <th>Age / Gender</th>
+                    <th>Blood Group</th>
+                    <th>Donating Organ</th>
+                    <th>Location</th>
+                    <th>HLA Phenotype</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                  </tr>
+                </thead>
+                <tbody id="donors-table-body">
+                  <tr><td colspan="9" style="text-align:center; padding: 20px;">Loading donors...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 3: Recipient Waitlist (Public Overview)
+           ===================================================================== -->
+      <section id="view-recipients" class="view-page">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🏥</span>
+              <span>Recipient Clinical Waitlist</span>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openRegisterModal('recipient')">+ Register New Recipient</button>
+          </div>
+          <div class="card-body">
+            <div class="filter-bar">
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="recipient-search" placeholder="Search by patient name, ID, city, organ...">
+              </div>
+              <div class="filter-group">
+                <select class="select-control" id="recipient-filter-urgency">
+                  <option value="">All Urgency Tiers</option>
+                  <option value="1">Critical (Tier 1)</option>
+                  <option value="2">Urgent (Tier 2)</option>
+                  <option value="3">Standard (Tier 3)</option>
+                </select>
+
+                <select class="select-control" id="recipient-filter-organ">
+                  <option value="">All Organs</option>
+                  <option value="Kidney">Kidney</option>
+                  <option value="Liver">Liver</option>
+                  <option value="Heart">Heart</option>
+                  <option value="Lung">Lung</option>
+                  <option value="Pancreas">Pancreas</option>
+                  <option value="Cornea">Cornea</option>
+                </select>
+
+                <select class="select-control" id="recipient-filter-bg">
+                  <option value="">All Blood Groups</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Patient Name</th>
+                    <th>Age / Gender</th>
+                    <th>Blood Group</th>
+                    <th>Required Organ</th>
+                    <th>Urgency Tier</th>
+                    <th>Wait Days</th>
+                    <th>Location</th>
+                    <th>HLA Phenotype</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recipients-table-body">
+                  <tr><td colspan="10" style="text-align:center; padding: 20px;">Loading recipients...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 4: Bipartite Graph Visualizer
+           ===================================================================== -->
+      <section id="view-graph" class="view-page">
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🕸️</span>
+              <span>Bipartite Compatibility Graph Visualizer & Traversal Engine</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <label style="font-size: 12px; font-weight: 600; color: #475569;">Start Donor:</label>
+              <select class="select-control" id="traversal-start-donor" style="min-width: 160px;">
+                <!-- Populated dynamically -->
+              </select>
+              <button class="btn btn-secondary btn-sm" id="btn-run-bfs">Run BFS Traversal</button>
+              <button class="btn btn-secondary btn-sm" id="btn-run-dfs">Run DFS Traversal</button>
+              <button class="btn btn-outline btn-sm" id="btn-reset-graph-view">Reset View</button>
+            </div>
+          </div>
+          <div class="card-body" style="padding: 12px;">
+            <div class="graph-container-wrapper">
+              <div class="graph-toolbar">
+                <div class="graph-legend">
+                  <div class="legend-item">
+                    <div class="legend-dot donor"></div>
+                    <span>Donors (V₁ Left)</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-dot recipient"></div>
+                    <span>Recipients (V₂ Right)</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-dot matched"></div>
+                    <span>Matched Edge</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-dot critical"></div>
+                    <span>Critical Priority</span>
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: #cbd5e1;">
+                  <label><input type="checkbox" id="chk-show-all-edges" checked> Show All Edges</label>
+                  <span>•</span>
+                  <span>Drag to pan • Scroll to zoom</span>
+                </div>
+              </div>
+
+              <!-- Canvas -->
+              <canvas id="graph-canvas"></canvas>
+            </div>
+
+            <!-- Traversal Execution Log Console -->
+            <div style="margin-top: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 13px; font-weight: 700; color: #1e293b;">Traversal Execution Step Trace Console:</span>
+                <span id="traversal-stats-badge" class="badge badge-standard" style="display:none;">Traversed</span>
+              </div>
+              <div class="traversal-console">
+                <pre id="traversal-log">// Select a Start Donor above and click "Run BFS Traversal" or "Run DFS Traversal" to execute graph search on C backend...</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 5: Matching Engine
+           ===================================================================== -->
+      <section id="view-matching" class="view-page">
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="card-header">
+            <div class="card-title">
+              <span>⚡</span>
+              <span>Clinical Organ Allocation Matching Engine</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <select class="select-control" id="matching-algo-select" style="min-width: 220px; font-weight: 600;">
+                <option value="graph">Graph-Based Algorithm (Max Weight)</option>
+                <option value="traditional">Traditional Sequential (FCFS/FIFO)</option>
+              </select>
+              <button class="btn btn-primary" id="btn-run-matching">Execute Allocation</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stats-grid" style="margin-bottom: 0;">
+              <div class="stat-card" style="padding: 14px 18px;">
+                <div class="stat-icon green" style="width: 40px; height: 40px; font-size: 18px;">✓</div>
+                <div class="stat-info">
+                  <div class="stat-value" id="match-kpi-pairs" style="font-size: 20px;">--</div>
+                  <div class="stat-label">Pairs Matched</div>
+                </div>
+              </div>
+              <div class="stat-card" style="padding: 14px 18px;">
+                <div class="stat-icon amber" style="width: 40px; height: 40px; font-size: 18px;">🎯</div>
+                <div class="stat-info">
+                  <div class="stat-value" id="match-kpi-score" style="font-size: 20px;">--%</div>
+                  <div class="stat-label">Avg Compatibility</div>
+                </div>
+              </div>
+              <div class="stat-card" style="padding: 14px 18px;">
+                <div class="stat-icon red" style="width: 40px; height: 40px; font-size: 18px;">🚨</div>
+                <div class="stat-info">
+                  <div class="stat-value" id="match-kpi-critical" style="font-size: 20px;">--</div>
+                  <div class="stat-label">Critical Patients Saved</div>
+                </div>
+              </div>
+              <div class="stat-card" style="padding: 14px 18px;">
+                <div class="stat-icon blue" style="width: 40px; height: 40px; font-size: 18px;">⏱️</div>
+                <div class="stat-info">
+                  <div class="stat-value" id="match-kpi-time" style="font-size: 20px;">-- μs</div>
+                  <div class="stat-label">Execution Time</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📋</span>
+              <span id="matching-table-title">Allocation Pairs Results</span>
+            </div>
+            <div style="font-size: 12px; color: #64748b;" id="matching-meta-subtitle">
+              Click any pair row to view detailed clinical rationale & point breakdown
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Donor ID & Name</th>
+                    <th>Donor Blood / Age</th>
+                    <th>Recipient ID & Name</th>
+                    <th>Patient Blood / Age</th>
+                    <th>Organ</th>
+                    <th>Urgency</th>
+                    <th>Wait Time</th>
+                    <th>Match Score</th>
+                    <th>Clinical Rationale</th>
+                  </tr>
+                </thead>
+                <tbody id="matching-results-tbody">
+                  <tr><td colspan="10" style="text-align:center; padding: 24px;">Click "Execute Allocation" to run algorithm</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 6: Algorithm Comparison
+           ===================================================================== -->
+      <section id="view-comparison" class="view-page">
+        <div class="comparison-grid">
+          <!-- Graph-Based Card -->
+          <div class="comparison-card graph-card">
+            <div class="comparison-badge">Optimized Graph Match</div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #0284c7;">Bipartite Graph Algorithm</h3>
+            <p style="font-size: 13px; color: #64748b;">Maximum Weight Matching with Priority Augmentation</p>
+
+            <div class="card-hero-metric">
+              <div class="metric-big" id="comp-graph-score">--%</div>
+              <div class="metric-sub">Average Compatibility Score</div>
+            </div>
+
+            <div class="metric-list">
+              <div class="metric-row"><span class="label">Total Pairs Matched</span><span class="value" id="comp-graph-pairs">--</span></div>
+              <div class="metric-row"><span class="label">Critical Urgency Matched</span><span class="value" id="comp-graph-critical" style="color: #10b981;">--</span></div>
+              <div class="metric-row"><span class="label">Total Score Sum</span><span class="value" id="comp-graph-total-score">--</span></div>
+              <div class="metric-row"><span class="label">Comparisons Performed</span><span class="value" id="comp-graph-comps">--</span></div>
+              <div class="metric-row"><span class="label">Execution Time</span><span class="value" id="comp-graph-time">-- μs</span></div>
+              <div class="metric-row"><span class="label">Theoretical Complexity</span><span class="value" style="font-family: monospace; color: #0284c7;">O(V · E)</span></div>
+            </div>
+          </div>
+
+          <!-- Traditional FCFS Card -->
+          <div class="comparison-card trad-card">
+            <div class="comparison-badge">Sequential Baseline</div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #475569;">Traditional FCFS Method</h3>
+            <p style="font-size: 13px; color: #64748b;">Sequential Greedy Linear Search (First-Come-First-Served)</p>
+
+            <div class="card-hero-metric">
+              <div class="metric-big" id="comp-trad-score">--%</div>
+              <div class="metric-sub">Average Compatibility Score</div>
+            </div>
+
+            <div class="metric-list">
+              <div class="metric-row"><span class="label">Total Pairs Matched</span><span class="value" id="comp-trad-pairs">--</span></div>
+              <div class="metric-row"><span class="label">Critical Urgency Matched</span><span class="value" id="comp-trad-critical" style="color: #64748b;">--</span></div>
+              <div class="metric-row"><span class="label">Total Score Sum</span><span class="value" id="comp-trad-total-score">--</span></div>
+              <div class="metric-row"><span class="label">Comparisons Performed</span><span class="value" id="comp-trad-comps">--</span></div>
+              <div class="metric-row"><span class="label">Execution Time</span><span class="value" id="comp-trad-time">-- μs</span></div>
+              <div class="metric-row"><span class="label">Theoretical Complexity</span><span class="value" style="font-family: monospace; color: #64748b;">O(N²)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 12px;">📊 Compatibility & Critical Urgency Satisfaction</h4>
+            <div class="chart-wrapper"><canvas id="chart-scores"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 12px;">⚡ Execution Time & Computational Operations</h4>
+            <div class="chart-wrapper"><canvas id="chart-time"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 7: Scalability Benchmark
+           ===================================================================== -->
+      <section id="view-benchmark" class="view-page">
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🧪</span>
+              <span>Empirical Scalability & Asymptotic Performance Benchmark</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <label style="font-size: 12px; font-weight: 600; color: #475569;">Dataset Size:</label>
+              <select class="select-control" id="benchmark-size-select" style="min-width: 140px;">
+                <option value="50">N = 50 Pairs</option>
+                <option value="100">N = 100 Pairs</option>
+                <option value="200">N = 200 Pairs</option>
+                <option value="400">N = 400 Pairs</option>
+              </select>
+              <button class="btn btn-primary btn-sm" id="btn-run-benchmark">Run Benchmark</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive" style="margin-bottom: 20px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Sample Size (N)</th>
+                    <th>Algorithm</th>
+                    <th>Matched Pairs</th>
+                    <th>Avg Match Score</th>
+                    <th>Comparisons</th>
+                    <th>Execution Time (μs)</th>
+                  </tr>
+                </thead>
+                <tbody id="benchmark-results-tbody">
+                  <tr><td colspan="6" style="text-align: center; padding: 20px;">Click "Run Benchmark" to execute tests</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="chart-card" style="border: 1px solid #e2e8f0;">
+              <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 12px;">📈 Execution Time Scaling Curves: Graph Algorithm vs Traditional FCFS</h4>
+              <div class="chart-wrapper" style="height: 320px;"><canvas id="chart-benchmark"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: LOGIN
+       ========================================================================= -->
+  <div class="modal-overlay" id="modal-login">
+    <div class="modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>Sign In to OrganMatch AI</h3>
+        <button class="close-btn" data-modal-close="modal-login">×</button>
+      </div>
+      <form id="form-login">
+        <div class="modal-body">
+          <!-- Role Selector -->
+          <label style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px; display:block;">Select Access Role:</label>
+          <div class="role-selector" id="login-role-selector">
+            <div class="role-option active" data-role="donor">🩸 Donor</div>
+            <div class="role-option" data-role="recipient">🏥 Recipient</div>
+            <div class="role-option" data-role="admin">🛡️ Admin</div>
+          </div>
+
+          <div id="login-admin-notice" style="display:none; background:#f5f3ff; border:1px solid #ddd6fe; border-radius:6px; padding:8px 12px; font-size:11px; color:#5b21b6; margin-bottom:12px;">
+            🔒 Admin access restricted to: <strong>saisriramchakka@gmail.com</strong>
+          </div>
+
+          <div class="form-group" style="margin-bottom:14px;">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-control" required placeholder="user@domain.com">
+          </div>
+
+          <div class="form-group" style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label for="login-password">Password</label>
+              <a href="#" id="link-forgot-password" style="font-size:11px; color:#0284c7; text-decoration:none;">Forgot Password?</a>
+            </div>
+            <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+          </div>
+
+          <div id="login-error-msg" style="display:none; color:#ef4444; font-size:12px; margin-bottom:10px;"></div>
+        </div>
+        <div class="modal-footer" style="justify-content:space-between;">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-goto-register">Create Account</button>
+          <button type="submit" class="btn btn-primary" id="btn-login-submit">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: REGISTRATION (Donor & Recipient)
+       ========================================================================= -->
+  <div class="modal-overlay" id="modal-register">
+    <div class="modal" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="modal-register-title">Register for Organ Donation Portal</h3>
+        <button class="close-btn" data-modal-close="modal-register">×</button>
+      </div>
+      <div class="modal-body">
+        <label style="font-size:12px; font-weight:700; color:#475569; margin-bottom:6px; display:block;">Select Account Type to Register:</label>
+        <div class="role-selector" id="reg-role-selector">
+          <div class="role-option active" data-role="donor">🩸 Register as Donor</div>
+          <div class="role-option" data-role="recipient">🏥 Register as Recipient</div>
+        </div>
+
+        <!-- Form Container -->
+        <form id="form-register">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="reg-name" class="form-control" required placeholder="e.g. Robert Chen">
+            </div>
+
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" id="reg-email" class="form-control" required placeholder="e.g. robert@example.com">
+            </div>
+
+            <div class="form-group">
+              <label>Password *</label>
+              <input type="password" id="reg-password" class="form-control" required minlength="6" placeholder="Min. 6 characters">
+            </div>
+
+            <div class="form-group">
+              <label>Confirm Password *</label>
+              <input type="password" id="reg-confirm-password" class="form-control" required minlength="6" placeholder="Re-enter password">
+            </div>
+
+            <div class="form-group">
+              <label>Age *</label>
+              <input type="number" id="reg-age" class="form-control" required min="1" max="100" value="30">
+            </div>
+
+            <div class="form-group">
+              <label>Gender *</label>
+              <select id="reg-gender" class="form-control" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Mobile Number *</label>
+              <input type="tel" id="reg-phone" class="form-control" required placeholder="e.g. 555-0199">
+            </div>
+
+            <div class="form-group">
+              <label>Blood Group *</label>
+              <select id="reg-bg" class="form-control" required>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" id="reg-city" class="form-control" required value="Boston">
+            </div>
+
+            <div class="form-group">
+              <label>State *</label>
+              <input type="text" id="reg-state" class="form-control" required value="MA">
+            </div>
+
+            <div class="form-group full-width">
+              <label>Address</label>
+              <input type="text" id="reg-address" class="form-control" placeholder="Street Address">
+            </div>
+
+            <!-- Donor Specific Fields -->
+            <div class="form-group donor-only-field">
+              <label>Organ Willing to Donate *</label>
+              <select id="reg-donor-organ" class="form-control">
+                <option value="Kidney">Kidney</option>
+                <option value="Liver">Liver</option>
+                <option value="Heart">Heart</option>
+                <option value="Lung">Lung</option>
+                <option value="Pancreas">Pancreas</option>
+                <option value="Cornea">Cornea</option>
+              </select>
+            </div>
+
+            <div class="form-group donor-only-field">
+              <label>Availability Status *</label>
+              <select id="reg-donor-avail" class="form-control">
+                <option value="AVAILABLE">AVAILABLE</option>
+                <option value="UNAVAILABLE">UNAVAILABLE</option>
+              </select>
+            </div>
+
+            <div class="form-group donor-only-field full-width">
+              <label>Medical History</label>
+              <input type="text" id="reg-donor-med-hist" class="form-control" value="No chronic conditions" placeholder="Relevant past conditions or surgeries">
+            </div>
+
+            <div class="form-group donor-only-field">
+              <label>Current Health Condition</label>
+              <input type="text" id="reg-donor-health" class="form-control" value="Good" placeholder="e.g. Good, Excellent">
+            </div>
+
+            <div class="form-group donor-only-field">
+              <label>Emergency Contact Number</label>
+              <input type="tel" id="reg-donor-emergency" class="form-control" placeholder="Emergency contact phone">
+            </div>
+
+            <!-- Recipient Specific Fields -->
+            <div class="form-group recipient-only-field" style="display:none;">
+              <label>Required Organ *</label>
+              <select id="reg-rec-organ" class="form-control">
+                <option value="Kidney">Kidney</option>
+                <option value="Liver">Liver</option>
+                <option value="Heart">Heart</option>
+                <option value="Lung">Lung</option>
+                <option value="Pancreas">Pancreas</option>
+                <option value="Cornea">Cornea</option>
+              </select>
+            </div>
+
+            <div class="form-group recipient-only-field" style="display:none;">
+              <label>Urgency Level *</label>
+              <select id="reg-rec-urgency" class="form-control">
+                <option value="1">Critical (Tier 1 - Immediate ICU)</option>
+                <option value="2">Urgent (Tier 2 - Rapid Deterioration)</option>
+                <option value="3">Standard (Tier 3 - Maintenance)</option>
+              </select>
+            </div>
+
+            <div class="form-group recipient-only-field full-width" style="display:none;">
+              <label>Medical Diagnosis / Condition</label>
+              <input type="text" id="reg-rec-condition" class="form-control" value="End-stage organ failure">
+            </div>
+
+            <div class="form-group recipient-only-field" style="display:none;">
+              <label>Hospital Center</label>
+              <input type="text" id="reg-rec-hospital" class="form-control" value="Metropolitan General Hospital">
+            </div>
+
+            <div class="form-group recipient-only-field" style="display:none;">
+              <label>Attending Doctor Details</label>
+              <input type="text" id="reg-rec-doctor" class="form-control" value="Dr. Sarah Jenkins, MD">
+            </div>
+
+            <!-- Security Question (For Password Recovery) -->
+            <div class="form-group full-width">
+              <label>Security Question (for password reset)</label>
+              <select id="reg-security-question" class="form-control">
+                <option value="What is your primary clinic or hospital?">What is your primary clinic or hospital?</option>
+                <option value="What city were you born in?">What city were you born in?</option>
+                <option value="What was your first school name?">What was your first school name?</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label>Security Answer *</label>
+              <input type="text" id="reg-security-answer" class="form-control" required placeholder="Answer for account recovery">
+            </div>
+          </div>
+
+          <div id="reg-error-msg" style="display:none; color:#ef4444; font-size:12px; margin-top:12px;"></div>
+
+          <div class="modal-footer" style="margin-top:16px;">
+            <button type="button" class="btn btn-secondary" data-modal-close="modal-register">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-register-submit">Complete Registration</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: FORGOT PASSWORD
+       ========================================================================= -->
+  <div class="modal-overlay" id="modal-forgot-password">
+    <div class="modal" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3>Reset Password</h3>
+        <button class="close-btn" data-modal-close="modal-forgot-password">×</button>
+      </div>
+      <form id="form-forgot-password">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label for="fp-email">Enter Registered Email</label>
+            <input type="email" id="fp-email" class="form-control" required placeholder="user@domain.com">
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="btn-fp-lookup" style="margin-bottom:14px;">Retrieve Security Question</button>
+
+          <div id="fp-step-2" style="display:none;">
+            <div class="form-group" style="margin-bottom:12px;">
+              <label id="fp-question-label">Security Question</label>
+              <input type="text" id="fp-answer" class="form-control" required placeholder="Your security answer">
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>New Password</label>
+              <input type="password" id="fp-new-pwd" class="form-control" required minlength="6" placeholder="Min. 6 characters">
+            </div>
+          </div>
+
+          <div id="fp-status-msg" style="font-size:12px; margin-top:8px;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close="modal-forgot-password">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-fp-submit" style="display:none;">Save New Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: COMPLETE DONATION (Admin Workflow)
+       ========================================================================= -->
+  <div class="modal-overlay" id="modal-complete-donation">
+    <div class="modal" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 style="color:#047857;">🏆 Complete Organ Donation & Update Availability</h3>
+        <button class="close-btn" data-modal-close="modal-complete-donation">×</button>
+      </div>
+      <form id="form-complete-donation">
+        <input type="hidden" id="cd-match-id">
+        <div class="modal-body">
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:12px; margin-bottom:16px; font-size:12px; color:#065f46;">
+            <strong>Important Clinical Rule:</strong> Marking this donation completed will automatically update the donor's availability status to <strong>UNAVAILABLE</strong> and remove them from future matching pools.
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Transplant Hospital Center *</label>
+            <input type="text" id="cd-hospital" class="form-control" required value="Metropolitan Transplant Center">
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Lead Transplant Surgeon *</label>
+            <input type="text" id="cd-surgeon" class="form-control" required value="Dr. Sarah Jenkins, MD">
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Clinical Notes / Post-Op Outcome</label>
+            <textarea id="cd-notes" class="form-control" rows="3" placeholder="Surgery completed successfully; graft functional; patient in recovery."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close="modal-complete-donation">Cancel</button>
+          <button type="submit" class="btn btn-success" id="btn-cd-submit">Mark Donation Completed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: CLINICAL RATIONALE BREAKDOWN
+       ========================================================================= -->
+  <div class="modal-overlay" id="modal-match-detail">
+    <div class="modal" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 id="modal-match-title">Allocation Clinical Rationale</h3>
+        <button class="close-btn" data-modal-close="modal-match-detail">×</button>
+      </div>
+      <div class="modal-body" id="modal-match-body">
+        <!-- Injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-modal-close="modal-match-detail">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Application Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>

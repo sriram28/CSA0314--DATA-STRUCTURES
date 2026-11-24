@@ -1,0 +1,20 @@
+id,name,age,gender,blood_group,required_organ,urgency_level,location,waiting_time,hla_type,status,reg_date
+REC-2001,Johnathan Hayes,38,Male,O+,Kidney,1,Boston,320,A2-A24-B44-B51-DR4-DR11,WAITING,2025-05-10
+REC-2002,Elena Rostova,32,Female,A+,Liver,1,New York,280,A1-A3-B7-B8-DR3-DR15,WAITING,2025-06-15
+REC-2003,Marcus Vance,49,Male,B+,Heart,1,Chicago,410,A2-A11-B35-B44-DR1-DR4,TRANSPLANT COMPLETED,2025-02-01
+REC-2004,Samantha Reed,24,Female,A-,Kidney,2,Boston,150,A2-A24-B8-B51-DR4-DR13,WAITING,2025-10-18
+REC-2005,Carlos Mendez,53,Male,AB+,Lung,2,Houston,190,A3-A24-B7-B35-DR7-DR15,WAITING,2025-09-05
+REC-2006,Hannah Abbott,29,Female,A+,Kidney,3,Philadelphia,90,A1-A2-B8-B44-DR3-DR4,WAITING,2025-12-20
+REC-2007,George Walker,44,Male,O+,Liver,2,Seattle,210,A2-A3-B7-B44-DR1-DR15,WAITING,2025-08-14
+REC-2008,Chloe Bennett,23,Female,B+,Cornea,3,Miami,65,A1-A24-B35-B51-DR4-DR7,WAITING,2026-01-10
+REC-2009,Arthur Pendelton,51,Male,A+,Heart,1,New York,350,A2-A11-B7-B8-DR3-DR15,WAITING,2025-04-12
+REC-2010,Grace Hopper,35,Female,O+,Pancreas,2,Denver,175,A1-A2-B44-B51-DR1-DR4,WAITING,2025-10-01
+REC-2011,Trevor Noah,36,Male,B+,Kidney,1,Chicago,390,A2-A24-B35-B44-DR4-DR11,WAITING,2025-03-22
+REC-2012,Beatrice Potter,40,Female,A+,Kidney,2,Boston,140,A2-A24-B7-B51-DR4-DR15,WAITING,2025-11-12
+REC-2013,Lucas Gray,31,Male,A+,Lung,3,Philadelphia,80,A1-A11-B8-B35-DR3-DR7,WAITING,2026-01-05
+REC-2014,Victoria Song,27,Female,AB+,Cornea,3,Atlanta,50,A3-A24-B7-B51-DR1-DR15,WAITING,2026-02-15
+REC-2015,Henry Ford,55,Male,O-,Liver,1,Houston,450,A2-A3-B8-B44-DR3-DR4,WAITING,2025-01-10
+REC-2016,Zoe Saldana,33,Female,AB+,Kidney,2,New York,160,A1-A2-B7-B35-DR4-DR15,WAITING,2025-10-25
+REC-2017,Patrick Stewart,47,Male,B+,Heart,2,Miami,200,A2-A11-B44-B51-DR1-DR7,WAITING,2025-08-30
+REC-2018,Diana Prince,26,Female,O+,Cornea,3,Seattle,45,A1-A24-B7-B8-DR3-DR4,WAITING,2026-02-28
+REC-2019,Sarah Connor,45,Female,O+,Kidney,1,Boston,0,A2-A24-B44-B51-DR4-DR11,WAITING,2026-11-21
